@@ -16,11 +16,7 @@ class MTHotKeyCenter: NSObject {
     
     var lock: NSLock = .init()
     
-    private var queue: OperationQueue = {
-        let queue = OperationQueue()
-        queue.maxConcurrentOperationCount = 1
-        return queue
-    }()
+    private var queue: OperationQueue = .init()
     
     private var monitor: Any?
     
@@ -28,74 +24,89 @@ class MTHotKeyCenter: NSObject {
     
     private override init() {
         super.init()
+        queue.maxConcurrentOperationCount = 1
         addSceneListen()
-    }
-    
-    func register(sceneType: String = .globalScene, hotkeys: [MTHotKey]) {
-        weak var weakSelf = self
-        queue.addOperation {
-            weakSelf?.registerInQeueu(sceneType: sceneType, hotkeys: hotkeys)
-        }
-    }
-    
-    func unregister(sceneType: String = .globalScene, hotkeys: [MTHotKey]) {
-        weak var weakSelf = self
-        queue.addOperation {
-            weakSelf?.unregisterInQueue(sceneType: sceneType, hotkeys: hotkeys)
-        }
     }
     
     private func registerGlobal(hotkey: MTHotKey) {
 //        let keyCode: UInt32 = UInt32(hotkey.keyCode)
 //        let modifierFlags = appkitModifiersToCarbonModifiers(modifierFlags: hotkey.modifierFlags)
 //        let hotkeyId = EventHotKeyID(signature: 11, id: 1)
-//        var pointer: UnsafeMutablePointer<EventHotKeyRef?>
+//        var pointer: UnsafeMutablePointer<EventHotKeyRef?>!
 //        RegisterEventHotKey(keyCode, modifierFlags, hotkeyId, GetEventDispatcherTarget(), 0, pointer)
+//        hotkey.hotkeyRef = pointer.pointee
     }
     
     private func unregisterGlobal(hotkey: MTHotKey) {
-
+//        guard let hotkeyRef = hotkey.hotkeyRef else {
+//            return
+//        }
+//        UnregisterEventHotKey(hotkeyRef)
     }
     
-    private func registerInQeueu(sceneType: String, hotkeys: [MTHotKey]) {
-        lock.lock()
-        if sceneType == .globalScene {
-            for hotkey in hotkeys {
-                registerGlobal(hotkey: hotkey)
+    // MARK: - 队列调度
+    func register(sceneType: String = .globalScene, hotkeys: [MTHotKey]) {
+        register(sceneType: sceneType, hotkeys: hotkeys, operationQueue: queue)
+    }
+    
+    func unregister(sceneType: String = .globalScene, hotkeys: [MTHotKey]) {
+        unregister(sceneType: sceneType, hotkeys: hotkeys, operationQueue: queue)
+    }
+    
+    // 指定队列调度注册快捷键
+    private func register(sceneType: String, hotkeys: [MTHotKey], operationQueue: OperationQueue) {
+        weak var weakSelf = self
+        operationQueue.addOperation {
+            guard let strongSelf = weakSelf else {
+                return
             }
-        } else {
-            var registerHotKeys = registerHotKeyDict[sceneType] ?? []
-            for hotkey in hotkeys {
-                if let index: Int = registerHotKeys.firstIndex(of: hotkey) {
-                    registerHotKeys[index] = hotkey
-                } else {
-                    registerHotKeys.append(hotkey)
+            strongSelf.lock.lock()
+            if sceneType == .globalScene {
+                for hotkey in hotkeys {
+                    strongSelf.registerGlobal(hotkey: hotkey)
                 }
-            }
-            registerHotKeyDict[sceneType] = registerHotKeys
-        }
-        lock.unlock()
-    }
-    
-    private func unregisterInQueue(sceneType: String, hotkeys: [MTHotKey]) {
-        lock.lock()
-        if sceneType == .globalScene {
-            for hotkey in hotkeys {
-                unregisterGlobal(hotkey: hotkey)
-            }
-        } else {
-            var registerHotKeyArr = registerHotKeyDict[sceneType] ?? []
-            for hotkey in hotkeys {
-                if let index = registerHotKeyArr.firstIndex(of: hotkey) {
-                    registerHotKeyArr.remove(at: index)
-                    break
+            } else {
+                var registerHotKeys = strongSelf.registerHotKeyDict[sceneType] ?? []
+                for hotkey in hotkeys {
+                    if let index: Int = registerHotKeys.firstIndex(of: hotkey) {
+                        registerHotKeys[index] = hotkey
+                    } else {
+                        registerHotKeys.append(hotkey)
+                    }
                 }
+                strongSelf.registerHotKeyDict[sceneType] = registerHotKeys
             }
-            registerHotKeyDict[sceneType] = registerHotKeyArr
+            strongSelf.lock.unlock()
         }
-        lock.unlock()
     }
     
+    // 指定队列注销快捷键
+    private func unregister(sceneType: String, hotkeys: [MTHotKey], operationQueue: OperationQueue) {
+        weak var weakSelf = self
+        operationQueue.addOperation {
+            guard let strongSelf = weakSelf else {
+                return
+            }
+            strongSelf.lock.lock()
+            if sceneType == .globalScene {
+                for hotkey in hotkeys {
+                    strongSelf.unregisterGlobal(hotkey: hotkey)
+                }
+            } else {
+                var registerHotKeyArr = strongSelf.registerHotKeyDict[sceneType] ?? []
+                for hotkey in hotkeys {
+                    if let index = registerHotKeyArr.firstIndex(of: hotkey) {
+                        registerHotKeyArr.remove(at: index)
+                        break
+                    }
+                }
+                strongSelf.registerHotKeyDict[sceneType] = registerHotKeyArr
+            }
+            strongSelf.lock.unlock()
+        }
+    }
+    
+    // MARK: - 响应
     func addSceneListen() {
         weak var weakSelf = self
         monitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in

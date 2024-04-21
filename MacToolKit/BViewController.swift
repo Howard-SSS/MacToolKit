@@ -15,7 +15,7 @@ class BViewController: MTViewController {
     var colorArr: [NSColor] = [.white, .blue, .green]
     
     lazy var lab: NSTextField = {
-        let lab = NSTextField(frame: .init(x: 0, y: 0, width: 200, height: 45))
+        let lab = NSTextField(frame: .init(x: 0, y: 0, width: 200, height: 50))
         lab.isEditable = false
         lab.stringValue = "BViewController"
         lab.textColor = .black
