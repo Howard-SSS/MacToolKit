@@ -7,19 +7,32 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		39551DF02BD4FA8B007206F9 /* MTHotKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39551DEF2BD4FA8B007206F9 /* MTHotKey.swift */; };
+		39551DF32BD500EA007206F9 /* MTHotKeyCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39551DF22BD500EA007206F9 /* MTHotKeyCenter.swift */; };
+		39551DF72BD51CFC007206F9 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39551DF62BD51CFC007206F9 /* Extension.swift */; };
+		39551DFC2BD522B1007206F9 /* AViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39551DFB2BD522B1007206F9 /* AViewController.swift */; };
+		39551DFE2BD52340007206F9 /* BViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39551DFD2BD52340007206F9 /* BViewController.swift */; };
 		396668DC2BD201A2007F8668 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 396668DB2BD201A2007F8668 /* AppDelegate.swift */; };
-		396668DE2BD201A2007F8668 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 396668DD2BD201A2007F8668 /* ViewController.swift */; };
 		396668E02BD201A3007F8668 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 396668DF2BD201A3007F8668 /* Assets.xcassets */; };
 		396668E32BD201A3007F8668 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 396668E12BD201A3007F8668 /* Main.storyboard */; };
+		396668EE2BD204FF007F8668 /* MTHotKeyControlProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 396668ED2BD204FF007F8668 /* MTHotKeyControlProtocol.swift */; };
+		396668F02BD207B3007F8668 /* MTViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 396668EF2BD207B3007F8668 /* MTViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		39551DEF2BD4FA8B007206F9 /* MTHotKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTHotKey.swift; sourceTree = "<group>"; };
+		39551DF22BD500EA007206F9 /* MTHotKeyCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTHotKeyCenter.swift; sourceTree = "<group>"; };
+		39551DF62BD51CFC007206F9 /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
+		39551DFB2BD522B1007206F9 /* AViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AViewController.swift; sourceTree = "<group>"; };
+		39551DFD2BD52340007206F9 /* BViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BViewController.swift; sourceTree = "<group>"; };
 		396668D82BD201A2007F8668 /* MacToolKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MacToolKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		396668DB2BD201A2007F8668 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		396668DD2BD201A2007F8668 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		396668DF2BD201A3007F8668 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		396668E22BD201A3007F8668 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		396668E42BD201A3007F8668 /* MacToolKit.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MacToolKit.entitlements; sourceTree = "<group>"; };
+		396668ED2BD204FF007F8668 /* MTHotKeyControlProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTHotKeyControlProtocol.swift; sourceTree = "<group>"; };
+		396668EF2BD207B3007F8668 /* MTViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MTViewController.swift; sourceTree = "<group>"; };
+		396668F52BD2DD5E007F8668 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,6 +46,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		39551DF12BD500CE007206F9 /* Manager */ = {
+			isa = PBXGroup;
+			children = (
+				39551DEF2BD4FA8B007206F9 /* MTHotKey.swift */,
+				39551DF22BD500EA007206F9 /* MTHotKeyCenter.swift */,
+			);
+			path = Manager;
+			sourceTree = "<group>";
+		};
+		39551DFA2BD51E95007206F9 /* MTHotKeyControl */ = {
+			isa = PBXGroup;
+			children = (
+				396668ED2BD204FF007F8668 /* MTHotKeyControlProtocol.swift */,
+				396668EF2BD207B3007F8668 /* MTViewController.swift */,
+			);
+			path = MTHotKeyControl;
+			sourceTree = "<group>";
+		};
 		396668CF2BD201A2007F8668 = {
 			isa = PBXGroup;
 			children = (
@@ -52,11 +83,16 @@
 		396668DA2BD201A2007F8668 /* MacToolKit */ = {
 			isa = PBXGroup;
 			children = (
+				39551DFA2BD51E95007206F9 /* MTHotKeyControl */,
+				39551DF12BD500CE007206F9 /* Manager */,
+				39551DF62BD51CFC007206F9 /* Extension.swift */,
+				396668F52BD2DD5E007F8668 /* Info.plist */,
 				396668DB2BD201A2007F8668 /* AppDelegate.swift */,
-				396668DD2BD201A2007F8668 /* ViewController.swift */,
 				396668DF2BD201A3007F8668 /* Assets.xcassets */,
 				396668E12BD201A3007F8668 /* Main.storyboard */,
 				396668E42BD201A3007F8668 /* MacToolKit.entitlements */,
+				39551DFB2BD522B1007206F9 /* AViewController.swift */,
+				39551DFD2BD52340007206F9 /* BViewController.swift */,
 			);
 			path = MacToolKit;
 			sourceTree = "<group>";
@@ -131,7 +167,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				396668DE2BD201A2007F8668 /* ViewController.swift in Sources */,
+				39551DFC2BD522B1007206F9 /* AViewController.swift in Sources */,
+				39551DFE2BD52340007206F9 /* BViewController.swift in Sources */,
+				39551DF72BD51CFC007206F9 /* Extension.swift in Sources */,
+				396668F02BD207B3007F8668 /* MTViewController.swift in Sources */,
+				39551DF02BD4FA8B007206F9 /* MTHotKey.swift in Sources */,
+				396668EE2BD204FF007F8668 /* MTHotKeyControlProtocol.swift in Sources */,
+				39551DF32BD500EA007206F9 /* MTHotKeyCenter.swift in Sources */,
 				396668DC2BD201A2007F8668 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -280,6 +322,7 @@
 				DEVELOPMENT_TEAM = C6TTF7VT5L;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MacToolKit/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
@@ -307,6 +350,7 @@
 				DEVELOPMENT_TEAM = C6TTF7VT5L;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MacToolKit/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
