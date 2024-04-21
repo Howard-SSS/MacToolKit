@@ -20,4 +20,6 @@ extension UInt {
 extension String {
     
     static let globalScene: String = "globalSceneId"
+    
+    static let divisionPart: String = "jdk18"
 }

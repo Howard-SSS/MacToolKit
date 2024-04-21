@@ -9,6 +9,8 @@ import Cocoa
 
 class MTHotKey: NSObject {
 
+    let hotkeyId: String
+    
     var sceneType: String
     
     var target: NSObject?
@@ -46,6 +48,7 @@ class MTHotKey: NSObject {
     }
     
     init(sceneType: String = .globalScene, target: NSObject, selector: Selector, object: Any?, keyCode: UInt16, modifierFlags: UInt, queue: DispatchQueue? = nil) {
+        self.hotkeyId = sceneType + .divisionPart + UUID().uuidString
         self.sceneType = sceneType
         self.target = target
         self.selector = selector
@@ -54,6 +57,7 @@ class MTHotKey: NSObject {
     }
     
     init(sceneType: String = .globalScene, keyCode: UInt16, modifierFlasg: UInt, queue: DispatchQueue? = nil, task: @escaping ((NSEvent) -> Void)) {
+        self.hotkeyId = sceneType + .divisionPart + UUID().uuidString
         self.sceneType = sceneType
         self.task = task
         self.keyCode = keyCode
