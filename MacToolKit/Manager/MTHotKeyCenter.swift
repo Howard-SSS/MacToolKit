@@ -186,10 +186,18 @@ public class MTHotKeyCenter: NSObject {
         let modifierFlags = lazyHandleModel.modifierFlags
         let temp = NSEvent.ModifierFlags(rawValue: lazyHandleModel.modifierFlags)
         for hotkey in hotkeyArr {
-            if hotkey.keyCodes == keyCodes && temp.contains(.init(rawValue: hotkey.modifierFlags)) {
-                hotkey.invoke()
-                handleResult = true
-                break
+            if modifierFlags == 256 { // 不包含功能键
+                if hotkey.modifierFlags == 256 && hotkey.keyCodes == keyCodes {
+                    hotkey.invoke()
+                    handleResult = true
+                    break
+                }
+            } else {
+                if hotkey.modifierFlags != 256 && temp.contains(.init(rawValue: hotkey.modifierFlags)) && hotkey.keyCodes == keyCodes {
+                    hotkey.invoke()
+                    handleResult = true
+                    break
+                }
             }
         }
         self.lazyHandleModel = nil
@@ -228,13 +236,13 @@ public class MTHotKeyCenter: NSObject {
         var handleResult = false
         for hotkey in hotkeyArr {
             if event.modifierFlags.rawValue == 256 { // 不包含功能键
-                if hotkey.keyCodes.count == 1 && hotkey.keyCodes[0] == event.keyCode {
+                if hotkey.modifierFlags == 256 && hotkey.keyCodes.count == 1 && hotkey.keyCodes[0] == event.keyCode {
                     hotkey.invoke()
                     handleResult = true
                     break
                 }
             } else {
-                if hotkey.keyCodes.count == 1 && hotkey.keyCodes[0] == event.keyCode && event.modifierFlags.contains(.init(rawValue: hotkey.modifierFlags)) {
+                if hotkey.modifierFlags != 256 && event.modifierFlags.contains(.init(rawValue: hotkey.modifierFlags)) && hotkey.keyCodes.count == 1 && hotkey.keyCodes[0] == event.keyCode {
                     hotkey.invoke()
                     handleResult = true
                     break
