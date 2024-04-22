@@ -7,7 +7,7 @@
 
 import Cocoa
 
-class MTHotKey: NSObject {
+public class MTHotKey: NSObject {
     
     let sceneType: String
     
@@ -78,7 +78,7 @@ class MTHotKey: NSObject {
         }
     }
     
-    override func isEqual(_ object: Any?) -> Bool {
+    public override func isEqual(_ object: Any?) -> Bool {
         guard let tempObject = object as? MTHotKey else {
             return false
         }

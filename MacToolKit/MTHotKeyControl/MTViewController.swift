@@ -7,7 +7,7 @@
 
 import Cocoa
 
-class MTViewController: NSViewController, MTHotKeyControlProtocol {
+open class MTViewController: NSViewController, MTHotKeyControlProtocol {
     
     final var sceneId: String {
         NSStringFromClass(Self.self)
@@ -16,17 +16,17 @@ class MTViewController: NSViewController, MTHotKeyControlProtocol {
     var hotkeyIdArr: [String] = []
     
     func registerHotkey() -> [MTHotKey] {
-        fatalError("需要实现")
+        fatalError("需要实现 MTViewController")
     }
     
-    override func viewDidAppear() {
+    open override func viewDidAppear() {
         super.viewDidAppear()
         let hotkeys = registerHotkey()
         hotkeyIdArr = hotkeys.map({$0.sceneType + .divisionPart + $0.uuid})
         MTHotKeyCenter.default.register(sceneType: sceneId, hotkeys: hotkeys)
     }
     
-    override func viewDidDisappear() {
+    open override func viewDidDisappear() {
         super.viewDidDisappear()
         MTHotKeyCenter.default.unregister(sceneType: sceneId)
     }

@@ -8,7 +8,7 @@
 import Cocoa
 import Carbon
 
-class MTHotKeyCenter: NSObject {
+public class MTHotKeyCenter: NSObject {
 
     static let `default`: MTHotKeyCenter = .init()
     
