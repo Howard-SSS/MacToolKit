@@ -8,10 +8,10 @@
 import Cocoa
 
 class MTHotKey: NSObject {
-
-    let hotkeyId: String
     
-    var sceneType: String
+    let sceneType: String
+    
+    let uuid: String
     
     var target: NSObject?
     
@@ -19,52 +19,52 @@ class MTHotKey: NSObject {
     
     var object: Any?
     
-    var task: ((NSEvent) -> Void)?
+    var task: (() -> Void)?
     
-    var keyCode: UInt16
+    var keyCodes: [UInt16]!
     
     var modifierFlags: UInt
     
     var queue: DispatchQueue?
     
     // 仅注册普通键响应
-    convenience init(sceneType: String = .globalScene, target: NSObject, selector: Selector, object: Any?, keyCode: UInt16, queue: DispatchQueue? = nil) {
-        self.init(sceneType: sceneType, target: target, selector: selector, object: object, keyCode: keyCode, modifierFlags: .notModifierFlags, queue: queue)
+    convenience init(sceneType: String = .globalScene, target: NSObject, selector: Selector, object: Any?, keyCodes: [UInt16], queue: DispatchQueue? = nil) {
+        self.init(sceneType: sceneType, target: target, selector: selector, object: object, keyCodes: keyCodes, modifierFlags: .notModifierFlags, queue: queue)
     }
     
     // 仅注册普通键响应
-    convenience init(sceneType: String = .globalScene, keyCode: UInt16, queue: DispatchQueue? = nil, task: @escaping ((NSEvent) -> Void)) {
-        self.init(sceneType: sceneType, keyCode: keyCode, modifierFlasg: .notModifierFlags, queue: queue, task: task)
+    convenience init(sceneType: String = .globalScene, keyCodes: [UInt16], queue: DispatchQueue? = nil, task: @escaping (() -> Void)) {
+        self.init(sceneType: sceneType, keyCodes: keyCodes, modifierFlasg: .notModifierFlags, queue: queue, task: task)
     }
     
     // 仅注册功能键响应
     convenience init(sceneType: String = .globalScene, target: NSObject, selector: Selector, object: Any?, modifierFlags: UInt, queue: DispatchQueue? = nil) {
-        self.init(sceneType: sceneType, target: target, selector: selector, object: object, keyCode: .notKeyCode, modifierFlags: modifierFlags, queue: queue)
+        self.init(sceneType: sceneType, target: target, selector: selector, object: object, keyCodes: [], modifierFlags: modifierFlags, queue: queue)
     }
     
     // 仅注册功能键响应
-    convenience init(sceneType: String = .globalScene, modifierFlasg: UInt, queue: DispatchQueue? = nil, task: @escaping ((NSEvent) -> Void)) {
-        self.init(sceneType: sceneType, keyCode: .notKeyCode, modifierFlasg: modifierFlasg, queue: queue, task: task)
+    convenience init(sceneType: String = .globalScene, modifierFlasg: UInt, queue: DispatchQueue? = nil, task: @escaping (() -> Void)) {
+        self.init(sceneType: sceneType, keyCodes: [], modifierFlasg: modifierFlasg, queue: queue, task: task)
     }
     
-    init(sceneType: String = .globalScene, target: NSObject, selector: Selector, object: Any?, keyCode: UInt16, modifierFlags: UInt, queue: DispatchQueue? = nil) {
-        self.hotkeyId = sceneType + .divisionPart + UUID().uuidString
+    init(sceneType: String = .globalScene, target: NSObject, selector: Selector, object: Any?, keyCodes: [UInt16], modifierFlags: UInt, queue: DispatchQueue? = nil) {
         self.sceneType = sceneType
+        self.uuid = UUID().uuidString
         self.target = target
         self.selector = selector
-        self.keyCode = keyCode
+        self.keyCodes = keyCodes
         self.modifierFlags = modifierFlags
     }
     
-    init(sceneType: String = .globalScene, keyCode: UInt16, modifierFlasg: UInt, queue: DispatchQueue? = nil, task: @escaping ((NSEvent) -> Void)) {
-        self.hotkeyId = sceneType + .divisionPart + UUID().uuidString
+    init(sceneType: String = .globalScene, keyCodes: [UInt16], modifierFlasg: UInt, queue: DispatchQueue? = nil, task: @escaping (() -> Void)) {
         self.sceneType = sceneType
+        self.uuid = UUID().uuidString
         self.task = task
-        self.keyCode = keyCode
+        self.keyCodes = keyCodes
         self.modifierFlags = modifierFlasg
     }
     
-    func invoke(event: NSEvent) {
+    func invoke() {
         let invokeQueue = queue ?? .main
         if let target = target, let selector = selector, target.responds(to: selector) {
             weak var weakSelf = self
@@ -73,7 +73,7 @@ class MTHotKey: NSObject {
             }
         } else if let task = task {
             invokeQueue.async {
-                task(event)
+                task()
             }
         }
     }
@@ -82,6 +82,6 @@ class MTHotKey: NSObject {
         guard let tempObject = object as? MTHotKey else {
             return false
         }
-        return keyCode == tempObject.keyCode && modifierFlags == tempObject.modifierFlags
+        return keyCodes == tempObject.keyCodes && modifierFlags == tempObject.modifierFlags
     }
 }

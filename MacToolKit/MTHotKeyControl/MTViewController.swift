@@ -22,7 +22,7 @@ class MTViewController: NSViewController, MTHotKeyControlProtocol {
     override func viewDidAppear() {
         super.viewDidAppear()
         let hotkeys = registerHotkey()
-        hotkeyIdArr = hotkeys.map({$0.hotkeyId})
+        hotkeyIdArr = hotkeys.map({$0.sceneType + .divisionPart + $0.uuid})
         MTHotKeyCenter.default.register(sceneType: sceneId, hotkeys: hotkeys)
     }
     

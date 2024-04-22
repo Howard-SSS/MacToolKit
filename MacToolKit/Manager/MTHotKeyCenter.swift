@@ -22,6 +22,9 @@ class MTHotKeyCenter: NSObject {
     
     private var flagMonitor: Any?
     
+    // 延迟响应模型，处理多个普通键连击
+    private var lazyHandleModel: LazyHotKeyModel?
+    
     private override init() {
         super.init()
         operationQueue.maxConcurrentOperationCount = 1
@@ -70,7 +73,7 @@ class MTHotKeyCenter: NSObject {
                 let uuid = parts[1]
                 let registerHotKeys = strongSelf.registerHotKeyDict[sceneType] ?? []
                 for hotkey in registerHotKeys {
-                    if hotkey.hotkeyId == hotkeyId {
+                    if hotkey.sceneType + .divisionPart + hotkey.uuid == hotkeyId {
                         result[hotkeyId] = hotkey
                         break
                     }
@@ -146,13 +149,51 @@ class MTHotKeyCenter: NSObject {
     func addSceneListen() {
         weak var weakSelf = self
         monitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
-            weakSelf?.handleCommonEvent(event: event)
+            // 取消上一个延迟多键响应
+            NSObject.cancelPreviousPerformRequests(withTarget: self)
+
+            // 能够响应则直接返回
+            if weakSelf?.handleCommonEvent(event: event) ?? false {
+                return event
+            }
+            
+            // 延时多键响应
+            var lazyHandleModel = weakSelf?.lazyHandleModel ?? .init(modifierFlags: event.modifierFlags.rawValue, keyCodes: [])
+            lazyHandleModel.modifierFlags = event.modifierFlags.rawValue
+            lazyHandleModel.keyCodes.append(event.keyCode)
+            weakSelf?.lazyHandleModel = lazyHandleModel
+            weakSelf?.perform(#selector(weakSelf?.lazyHandleMoreEvent), with: nil, afterDelay: 0.2)
+            
             return event
         }
         flagMonitor = NSEvent.addLocalMonitorForEvents(matching: .flagsChanged, handler: { event in
             weakSelf?.handleFlagEvent(event: event)
             return event
         })
+    }
+    
+    // 响应多普通键
+    @discardableResult
+    @objc func lazyHandleMoreEvent() -> Bool {
+        guard let viewController = topMostViewController() as? MTViewController else {
+            return false
+        }
+        guard let hotkeyArr = registerHotKeyDict[viewController.sceneId], let lazyHandleModel = lazyHandleModel else {
+            return false
+        }
+        var handleResult = false
+        let keyCodes = lazyHandleModel.keyCodes.sorted()
+        let modifierFlags = lazyHandleModel.modifierFlags
+        let temp = NSEvent.ModifierFlags(rawValue: lazyHandleModel.modifierFlags)
+        for hotkey in hotkeyArr {
+            if hotkey.keyCodes == keyCodes && temp.contains(.init(rawValue: hotkey.modifierFlags)) {
+                hotkey.invoke()
+                handleResult = true
+                break
+            }
+        }
+        self.lazyHandleModel = nil
+        return handleResult
     }
     
     // 响应功能键
@@ -164,16 +205,18 @@ class MTHotKeyCenter: NSObject {
         guard let hotkeyArr = registerHotKeyDict[viewController.sceneId] else {
             return false
         }
+        var handleResult = false
         for hotkey in hotkeyArr {
-            if hotkey.keyCode == .notKeyCode && hotkey.modifierFlags == event.modifierFlags.rawValue {
-                hotkey.invoke(event: event)
+            if hotkey.keyCodes.isEmpty && event.modifierFlags.contains(.init(rawValue: hotkey.modifierFlags)) {
+                hotkey.invoke()
+                handleResult = true
                 break
             }
         }
-        return true
+        return handleResult
     }
     
-    // 响应功能键+普通键
+    // 响应功能键+单普通键
     @discardableResult
     func handleCommonEvent(event: NSEvent) -> Bool {
         guard let viewController = topMostViewController() as? MTViewController else {
@@ -182,20 +225,23 @@ class MTHotKeyCenter: NSObject {
         guard let hotkeyArr = registerHotKeyDict[viewController.sceneId] else {
             return false
         }
+        var handleResult = false
         for hotkey in hotkeyArr {
             if event.modifierFlags.rawValue == 256 { // 不包含功能键
-                if hotkey.keyCode == event.keyCode {
-                    hotkey.invoke(event: event)
+                if hotkey.keyCodes.count == 1 && hotkey.keyCodes[0] == event.keyCode {
+                    hotkey.invoke()
+                    handleResult = true
                     break
                 }
             } else {
-                if hotkey.keyCode == event.keyCode && event.modifierFlags.contains(.init(rawValue: hotkey.modifierFlags)) {
-                    hotkey.invoke(event: event)
+                if hotkey.keyCodes.count == 1 && hotkey.keyCodes[0] == event.keyCode && event.modifierFlags.contains(.init(rawValue: hotkey.modifierFlags)) {
+                    hotkey.invoke()
+                    handleResult = true
                     break
                 }
             }
         }
-        return true
+        return handleResult
     }
     
     func appkitModifiersToCarbonModifiers(modifierFlags: UInt) -> UInt32 {
@@ -216,6 +262,13 @@ class MTHotKeyCenter: NSObject {
 }
 
 extension MTHotKeyCenter {
+    
+    struct LazyHotKeyModel {
+        
+        var modifierFlags: UInt
+        
+        var keyCodes: [UInt16]
+    }
     
     func topMostViewController() -> NSViewController? {
         guard let contentView = NSApplication.shared.keyWindow?.contentView else { return nil }

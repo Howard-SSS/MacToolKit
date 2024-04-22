@@ -65,12 +65,18 @@ class AViewController: MTViewController {
     
     override func registerHotkey() -> [MTHotKey] {
         [
-            .init(sceneType: sceneId, target: self, selector: #selector(nextBackgroundColor), object: nil, keyCode: UInt16(kVK_ANSI_N)),
-            .init(sceneType: sceneId, keyCode: UInt16(kVK_ANSI_Q), modifierFlasg: NSEvent.ModifierFlags.control.rawValue, task: { [unowned self] event in
+            .init(sceneType: sceneId, target: self, selector: #selector(nextBackgroundColor), object: nil, keyCodes: [UInt16(kVK_ANSI_N)]),
+            .init(sceneType: sceneId, keyCodes: [UInt16(kVK_ANSI_Q)], modifierFlasg: NSEvent.ModifierFlags.control.rawValue, task: { [unowned self] in
                 guard let transform = presentVCBtn.layer?.transform else {
                     return
                 }
                 presentVCBtn.layer?.transform = CATransform3DRotate(transform, 0.5 * Double.pi, 0, 0, 1)
+            }),
+            .init(sceneType: sceneId, keyCodes: [UInt16(kVK_ANSI_W), UInt16(kVK_ANSI_E)], modifierFlasg: NSEvent.ModifierFlags.control.rawValue, task: { [unowned self] in
+                guard let transform = presentVCBtn.layer?.transform else {
+                    return
+                }
+                presentVCBtn.layer?.transform = CATransform3DRotate(transform, -0.5 * Double.pi, 0, 0, 1)
             })
         ]
     }

@@ -61,8 +61,8 @@ class BViewController: MTViewController {
     
     override func registerHotkey() -> [MTHotKey] {
         [
-            .init(sceneType: sceneId, target: self, selector: #selector(nextBackgroundColor), object: nil, keyCode: UInt16(kVK_ANSI_N)),
-            .init(sceneType: sceneId, keyCode: UInt16(kVK_ANSI_Q), modifierFlasg: NSEvent.ModifierFlags.control.rawValue, task: { [unowned self] event in
+            .init(sceneType: sceneId, target: self, selector: #selector(nextBackgroundColor), object: nil, keyCodes: [UInt16(kVK_ANSI_N)]),
+            .init(sceneType: sceneId, keyCodes: [UInt16(kVK_ANSI_Q)], modifierFlasg: NSEvent.ModifierFlags.control.rawValue, task: { [unowned self] in
                 guard let transform = popVCBtn.layer?.transform else {
                     return
                 }
