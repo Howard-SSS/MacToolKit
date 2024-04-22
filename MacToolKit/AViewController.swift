@@ -53,12 +53,20 @@ class AViewController: MTViewController {
         return presentVCBtn
     }()
     
+    lazy var aView: AView = {
+        let aView = AView(frame: .init(x: 0, y: 150, width: 200, height: 50))
+        aView.wantsLayer = true
+        aView.layer?.backgroundColor = NSColor.cyan.cgColor
+        return aView
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.layer?.backgroundColor = .white
         view.addSubview(lab)
         view.addSubview(nextColorHintLab)
         view.addSubview(rotationHintLab)
+        view.addSubview(aView)
         view.addSubview(presentVCBtn)
         avc = self
     }
